@@ -1,8 +1,8 @@
 # The name of the application (no spaces)
-app_name: strom
+app_name: redbeds
 
 # First and last name of the user
-user: YOUR NAME
+user: Shanpin Liu
 
 # The NLP product to run the application against
 product: NLP352
@@ -11,7 +11,7 @@ product: NLP352
 frequency: monthly
 
 # A list of terms used to subset the corpus
-terms: [stromatolite, stromatolitic, thrombolite, thrombolitic]
+terms: [red bed, red beds, redbed, redbeds, red-bed, red-beds]
 
 # Stored dictionary of terms, to be set by GDD infrastructure admins
-dictionary: strom
+dictionary: ???
