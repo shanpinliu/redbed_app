@@ -5,11 +5,12 @@
 import json,psycopg2, yaml
 
 # Connect to Postgres
+#Shanpin added 'Loader' parameter for Python 3 compatibility
 with open('./credentials', 'r') as credential_yaml:
-    credentials = yaml.load(credential_yaml)
+    credentials = yaml.load(credential_yaml, Loader=yaml.FullLoader)
 
 with open('./config', 'r') as config_yaml:
-    config = yaml.load(config_yaml)
+    config = yaml.load(config_yaml, Loader=yaml.FullLoader)
 
 # Connect to Postgres
 connection = psycopg2.connect(
@@ -27,7 +28,8 @@ cursor.execute("""
 connection.commit()
 
 #load in the bibJSON file
-with open('./input/bibjson') as fid:
+#Shanpin added parameters for PC compatibility
+with open('./input/bibjson', 'r', encoding='utf-8') as fid:
     bib=json.load(fid)
 
 #push docid, authors, title, journal name and url to PostGRES
@@ -41,17 +43,18 @@ for idx,item in enumerate(bib):
     url =[]
 
     #as failsafe, always check if each variable exists
-    if isinstance(item['_gddid'],unicode):
+    # JKW updated 'unicode' to 'str' for Python 3 compatibility
+    if isinstance(item['_gddid'],str):
         docid=item['_gddid'].encode('ascii','ignore')
     else:
         docid=item['_gddid']
 
-    if isinstance(item['title'],unicode):
+    if isinstance(item['title'],str):
         title=item['title'].encode('ascii','ignore')
     else:
         title=item['title']
 
-    if isinstance(item['journal']['name'],unicode):
+    if isinstance(item['journal']['name'],str):
         journal=item['journal']['name'].encode('ascii','ignore')
     else:
         journal=item['journal']['name']
@@ -85,12 +88,10 @@ connection.commit()
 cursor.execute("""  WITH  query AS(SELECT journal, COUNT(journal)
                                   FROM bib
                                   GROUP BY journal)
-
                     UPDATE bib
                         SET journal_instances = query.count
                         FROM query
                         WHERE bib.journal = query.journal
-
 """)
 connection.commit()
 
