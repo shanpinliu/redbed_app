@@ -6,14 +6,14 @@
 DICT_DELIM='$$$'
 
 #words indicating stratigraphic names
-strat_flags = ["Group", "Formation", "Member", "Supergroup", "Bed", "Subgroup","Gp.", "Fm.", "Mbr.", "SGp.", "Gp", "Fm", "Mbr", "SGp"]
+strat_flags = ["Sequence", "Group", "Formation", "Member", "Supergroup", "Bed", "Subgroup","Gp.", "Fm.", "Mbr.", "SGp.", "Gp", "Fm", "Mbr", "SGp"]
     
-lith_flags = ["Dolomite","Dolostone","Limestone","Sandstone","Shale","Conglomerate","Chert"]
+lith_flags = ["Alluvium", "Anhydrite", "Arenite", "Argillite", "Arkose", "Bauxite", "Breccia", "Clay", "Claystone", "Colluvium", "Conglomerate", "Diamictite", "Evaporite", "Gravel", "Graywacke", "Gypsum", "Halite", "Iron formation", "Ironstone", "Laterite", "Litharenite", "Loess", "Mud", "Mudstone", "Paleosol", "Pelite", "Phosphorite", "Sand", "Sandstone", "Shale", "Siliceous ooze", "Silt", "Siltstone", "Soil", "Subarkose", "Sublitharenite", "Volcaniclastic", "Wacke", "Metasiltstone", "Metapelite", "Ankerite", "Anthracite", "Bafflestone", "Bindstone", "Biomicrite", "Biosparite", "Boundstone", "Calcareous", "Carbonate", "Chalk", "Chert", "Coal", "Coquina", "Diatomite", "Dolomite", "Dolostone", "Flint", "Greensand", "Grit", "Intramicrite", "Intrasparite", "Lignite", "Limestone", "Marl", "Micrite", "Novaculite", "Oolite", "Oomicrite", "Oosparite", "Packstone", "Peat", "Pelmicrite", "Pelsparite", "Phosphorite", "Quartz", "Rudstone", "Tar", "Tillite", "Travertine", "Tufa", "Siderite"]
 
 strat_flags = strat_flags+lith_flags
               
 #words indicating an age
-age_flags = ["Ma.", "Ga.", "Myr.","Ma", "Ga", "Myr"]
+age_flags = ["Ga.", "Ga", "Gyr.", "Gyr", "Ma.", "Ma", "Myr.", "Myr", "m.y.", "m.y.r"]
 
 #list of known and troublesome ligatures
 weird_strings = [['\xef\xac\x82', 'fl'], ['\xef\xac\x81', 'fi']]
