@@ -5,7 +5,19 @@
 #each string in this list will define a regular expression search
 #   EXAMPLE:    [r'\b' + ooid + r'\b', r'\b' + ooids + r'\b']
 #               will find all instances of 'ooid' or 'ooids' bound by a non-alphanumeric character
-target_names = ['stromatol']
+
+bed_target_names = ['red bed', 'red beds', 'redbed', 'redbeds']
+
+color_target_names = ['red', 'reddish', 'purple', 'purplish', 'pink', 'pinkish', 'brown', 'brownish', 'yellow', 'yellowish', 'green', 'greenish', 'black', 'blackish', 'dark', 'gray', 'grayish', 'white', 'whitish', 'blue', 'blueish', 'colourless']
+
+thick_target_names = ['thick', 'thickness']
+
+chemistry_target_names = ['Fe2+', 'Fe3+', 'FeO', 'Fe2O3']
+
+mineral_target_names = ['hematite', 'haematite', 'limonite', 'pyrite', 'siderite', 'goethite', 'maghemite']
+
+target_names = bed_target_names+color_target_names+thick_target_names+chemistry_target_names+mineral_target_names
+
 
 #an optional list of false hits
-bad_words = ['non-stromatolitic','nonstromatolitic','non-stromatolite']
+bad_words = ['line', 'lines', 'arrow', 'arrows', 'curve', 'curves', 'band', 'bands', 'star', 'stars', 'point', 'points']
