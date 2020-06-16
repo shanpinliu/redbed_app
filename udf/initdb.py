@@ -88,7 +88,7 @@ cursor.execute("""
 connection.commit()
 
 
-#STRAT_TARGET
+#STRAT_TARGET #Add int_id for delivery
 cursor.execute("""
     DROP TABLE IF EXISTS strat_target CASCADE;
     CREATE TABLE strat_target(
@@ -106,6 +106,7 @@ cursor.execute("""
         strat_start int,
         strat_end int,
         int_name text,
+        int_id int,
         age_agree text DEFAULT '-',
         age_sum text DEFAULT '-',
         words_between text[],
@@ -129,7 +130,7 @@ cursor.execute("""
 """)
 connection.commit()
 
-#STRAT_TARGET_DISTANT
+#STRAT_TARGET_DISTANT #Add int_id for delivery
 cursor.execute("""
     DROP TABLE IF EXISTS strat_target_distant CASCADE;
     CREATE TABLE strat_target_distant(
@@ -141,6 +142,7 @@ cursor.execute("""
         strat_flag text,
         num_phrase int,
         int_name text,
+        int_id int,
         strat_name_id text,
         age_agree text DEFAULT '-',
         age_sum text DEFAULT '-',
@@ -169,7 +171,7 @@ cursor.execute("""
 """)
 connection.commit()
 
-#RESULTS
+#RESULTS #Add int_name and int_id for delivery
 cursor.execute("""
     DROP TABLE IF EXISTS results CASCADE;
     CREATE TABLE results(
@@ -179,6 +181,8 @@ cursor.execute("""
         target_word text,
         strat_phrase_root text,
         strat_name_id  text,
+        int_name text,
+        int_id int,  
         age_sum text,
         source text,
         phrase text
