@@ -9,11 +9,11 @@ start_time = time.time()
 
 #load configuration file
 with open('./config', 'r') as config_yaml:
-    config = yaml.load(config_yaml)
+    config = yaml.load(config_yaml, Loader=yaml.FullLoader)
 
 #load credentials file
 with open('./credentials', 'r') as credential_yaml:
-    credentials = yaml.load(credential_yaml)
+    credentials = yaml.load(credential_yaml, Loader=yaml.FullLoader)
 
 #INITALIZE THE POSTGRES TABLES
 print 'Step 1: Initialize the PSQL tables ...'
@@ -60,6 +60,10 @@ os.system('python ./udf/ext_results.py')
 print 'Step 11: Find adjectives describing strom target words ...'
 os.system('python ./udf/ext_target_adjective.py')
 
+#POSTGRES DUMP
+print ('Step 12: Dump select results from PSQL ...')
+output = 'pg_dump -U '+ credentials['postgres']['user'] + ' -t results -t strat_target -t strat_target_distant -t age_check -t refs_location -t bib -t target_adjectives -t strat_phrases -t target_instancces -d ' + credentials['postgres']['database'] + ' > ./output/output.sql'
+subprocess.call(output, shell=True)
 
 #summary of performance time
 elapsed_time = time.time() - start_time
