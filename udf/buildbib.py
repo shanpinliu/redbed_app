@@ -64,11 +64,12 @@ for idx,item in enumerate(bib):
             names.append(name['name'].encode('ascii','ignore'))
 
     if 'link' in item.keys():
-        url=item['link'][0]['url']
+        if 'url' in item['link'][0]:
+            url=item['link'][0]['url']
 
-        for link in item['link']:
-            if link['type']=='sciencedirect':
-                url=link['url']
+            for link in item['link']:
+                if link['type']=='sciencedirect':
+                    url=link['url']
 
 
     #psql table insertion
