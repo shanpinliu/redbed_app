@@ -10,11 +10,11 @@ from psycopg2.extensions import AsIs
 start_time = time.time()
 
 # Connect to Postgres
-with open('./credentials', 'r') as credential_yaml:
-    credentials = yaml.load(credential_yaml)
+with open('./credentials.yml', 'r') as credential_yaml:
+    credentials = yaml.load(credential_yaml, Loader=yaml.FullLoader)
 
-with open('./config', 'r') as config_yaml:
-    config = yaml.load(config_yaml)
+with open('./config.yml', 'r') as config_yaml:
+    config = yaml.load(config_yaml, Loader=yaml.FullLoader)
 
 # Connect to Postgres
 connection = psycopg2.connect(
@@ -49,7 +49,7 @@ with open('./var/target_variables.txt') as fid:
     target_variables = fid.readlines()
 
 for i in target_variables:
-    exec i
+    exec (i)     #added parentheses for Python 3
 
 #loop through all sentences.
 to_write = []
@@ -84,8 +84,12 @@ for line in cursor:
 	    for span in target_word_idx:
 		#poses, paths and parents can be found at same indices of a target_name find
 		target_word = ' '.join(words[span[0]:span[1]])
+		#extended the word for latter precise matching @Shanpin
+		target_word_expand = str(' '+target_word+' ')
 
-		if target_word.lower() not in bad_words:
+		#if target_word.lower() not in bad_words: #comment out
+		#this matching is necessary for short words (i.e. ' red ' is in 'light-red ', but not in 'compared ')
+		if str(' '+name+' ') in str(target_word_expand) or str('-'+name+'-') in str(target_word_expand) or str('-'+name+' ') in str(target_word_expand) or str(' '+name+'-') in str(target_word_expand): 
 		    target_children=[]
 		    target_pose = poses[span[0]:span[1]]
 		    target_path = dep_paths[span[0]:span[1]]
