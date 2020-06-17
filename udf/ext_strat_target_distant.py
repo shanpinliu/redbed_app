@@ -12,11 +12,11 @@ from psycopg2.extensions import AsIs
 start_time = time.time()
 
 # Connect to Postgres
-with open('./credentials', 'r') as credential_yaml:
-    credentials = yaml.load(credential_yaml)
+with open('./credentials.yml', 'r') as credential_yaml:
+    credentials = yaml.load(credential_yaml, Loader=yaml.FullLoade)
 
-with open('./config', 'r') as config_yaml:
-    config = yaml.load(config_yaml)
+with open('./config.yml', 'r') as config_yaml:
+    config = yaml.load(config_yaml, Loader=yaml.FullLoade)
 
 # Connect to Postgres
 connection = psycopg2.connect(
@@ -129,7 +129,7 @@ for idx,doc in enumerate(doc_cursor):
     #strat_phrases from document that precede the orphan deepest into the document
     strat_cursor.execute(""" 
         SELECT DISTINCT ON (docid, sentid, strat_phrase_root,strat_name_id)
-                docid, sentid, strat_phrase_root, strat_flag, num_phrase, strat_name_id,int_name,age_agree from strat_phrases
+                docid, sentid, strat_phrase_root, strat_flag, num_phrase, strat_name_id,int_name,int_id,age_agree from strat_phrases
                 WHERE docid=%s
                 AND sentid<%s
              ORDER BY sentid ASC;""",
@@ -195,11 +195,11 @@ for idx,doc in enumerate(doc_cursor):
                 #info about the strat_phrase
                 [docid, sentid, strat_phrase_root, 
                 strat_flag, num_phrase, strat_name_id, 
-                int_name, age_agree] = match
+                int_name, int_id, age_agree] = match
                
                 toadd=[docid, sentid, strat_phrase_root, 
                        strat_flag, num_phrase, strat_name_id, 
-                       int_name, age_agree, target_distance,
+                       int_name, int_id, age_agree, target_distance,
                        target_id,target_word,parent,children,
                        words_between]
                 #dump to local variable                
@@ -213,6 +213,7 @@ for idx,doc in enumerate(doc_cursor):
                                                      num_phrase, 
                                                      strat_name_id, 
                                                      int_name, 
+                                                     int_id,
                                                      age_agree,
                                                      target_sent_dist,
                                                      target_id,
@@ -222,11 +223,11 @@ for idx,doc in enumerate(doc_cursor):
                                                      words_between)
                                 VALUES (%s, %s, %s, %s, %s, 
                                         %s, %s, %s, %s, %s,
-                                        %s, %s, %s, %s);""",
+                                        %s, %s, %s, %s, %s);""",
                                         
                                         (docid, sentid, strat_phrase_root, 
                                          strat_flag, num_phrase, strat_name_id, 
-                                         int_name, age_agree, target_distance,
+                                         int_name, int_id, age_agree, target_distance,
                                          target_id,target_word,parent,children,
                                          words_between)
                                          )
