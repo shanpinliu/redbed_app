@@ -87,7 +87,7 @@ for idx,line in enumerate(target):
                 (docid, sentid, target_id, target_word, sent[0][2][c])
             )
         if c<0:
-            print 'something is up!'
+            print ('something is up!')
 
 #push insertions to the database
 connection.commit()
