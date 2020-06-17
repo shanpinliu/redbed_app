@@ -8,11 +8,11 @@ import os, time, subprocess, yaml
 start_time = time.time()
 
 #load configuration file
-with open('./config', 'r') as config_yaml:
+with open('./config.yml', 'r') as config_yaml:
     config = yaml.load(config_yaml, Loader=yaml.FullLoader)
 
 #load credentials file
-with open('./credentials', 'r') as credential_yaml:
+with open('./credentials.yml', 'r') as credential_yaml:
     credentials = yaml.load(credential_yaml, Loader=yaml.FullLoader)
 
 #INITALIZE THE POSTGRES TABLES
