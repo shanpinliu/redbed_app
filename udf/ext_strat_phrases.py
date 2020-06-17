@@ -27,9 +27,9 @@ def download_csv( url ):
     #return variable
     dump_dict = {}
 
-    #get strat_names from Macrostrat API
-    dump = urllib2.urlopen( url )
-    #dump = csv.reader(dump) # modification for Python 3 compatibility
+    # get strat_names from Macrostrat API
+    # modified for Python 3 compatibility
+    dump = urlopen( url ) 
     dump = csv.reader(codecs.iterdecode(dump, 'utf-8'))
     
     #unpack downloaded CSV as list of tuples
