@@ -5,7 +5,9 @@
 # ACQUIRE RELEVANT MODULES and DATA
 #==============================================================================
 
-import time, random, psycopg2, urllib2, csv, yaml
+import time, random, psycopg2, csv, yaml
+from urllib.request import urlopen
+import codecs
 
 #tic
 start_time = time.time()
@@ -19,8 +21,8 @@ def download_csv( url ):
     dump_dict = {}
     
     #get strat_names from Macrostrat API
-    dump = urllib2.urlopen( url )
-    dump = csv.reader(dump)
+    dump = urlopen( url )
+    dump = csv.reader(codecs.iterdecode(dump, 'utf-8'))
     
     #unpack downloaded CSV as list of tuples
     #--> length of VARIABLE == number of fields
@@ -38,11 +40,11 @@ def download_csv( url ):
     
 
 #Connect to Postgres
-with open('./credentials', 'r') as credential_yaml:
-    credentials = yaml.load(credential_yaml)
+with open('./credentials.yml', 'r') as credential_yaml:
+    credentials = yaml.load(credential_yaml, Loader=yaml.FullLoader)
 
-with open('./config', 'r') as config_yaml:
-    config = yaml.load(config_yaml)
+with open('./config.yml', 'r') as config_yaml:
+    config = yaml.load(config_yaml, Loader=yaml.FullLoader)
 
 # Connect to Postgres
 connection = psycopg2.connect(
