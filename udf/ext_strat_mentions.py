@@ -106,7 +106,7 @@ with open('./var/strat_variables.txt') as fid:
     strat_variables = fid.readlines()
     
 for i in strat_variables:
-    exec i
+    exec (i)
 
 #PRE-PROCESS: hack to replace weird strings
 for idx,line in enumerate(sentences):
