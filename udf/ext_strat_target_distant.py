@@ -314,11 +314,12 @@ success = 'number of strat-distant target tuples : %s' %len(strat_target_distant
 
 #toc
 elapsed_time = time.time() - start_time
-print '\n ###########\n\n %s \n elapsed time: %d seconds\n\n ###########\n\n' %(success,elapsed_time)
+print ('\n ###########\n\n %s \n elapsed time: %d seconds\n\n ###########\n\n' %(success,elapsed_time))
 
 
 #show a random result
-r=random.randint(0,len(strat_target_distant)-1); show = "\n".join(str(x) for x in strat_target_distant[r]); print "=========================\n" + show +  "\n========================="
+r=random.randint(0,len(strat_target_distant)-1); show = "\n".join(str(x) for x in strat_target_distant[r]); 
+print ("=========================\n" + show +  "\n=========================")
         
 #close the postgres connection
 connection.close()
