@@ -8,11 +8,11 @@ from psycopg2.extensions import AsIs
 start_time = time.time()
 
 # Connect to Postgres
-with open('./credentials', 'r') as credential_yaml:
-    credentials = yaml.load(credential_yaml)
+with open('./credentials.yml', 'r') as credential_yaml:
+    credentials = yaml.load(credential_yaml, Loader=yaml.FullLoader)
 
-with open('./config', 'r') as config_yaml:
-    config = yaml.load(config_yaml)
+with open('./config.yml', 'r') as config_yaml:
+    config = yaml.load(config_yaml, Loader=yaml.FullLoader)
 
 # Connect to Postgres
 connection = psycopg2.connect(
@@ -34,6 +34,8 @@ cursor.execute("""
         strat_phrase_root text,
         strat_flag text,
         strat_name_id  text,
+	int_name text,
+        int_id int,
         age_sum text,
         source text,
         phrase text,
@@ -53,8 +55,8 @@ connection.commit()
 
 #gather results from the same-sentence inferences
 cursor.execute(""" 
-    INSERT INTO results (target_id, docid, sentid, target_word, strat_phrase_root,strat_flag,strat_name_id, age_sum, phrase, in_ref) 
-		(SELECT target_id, docid, sentid,  target_word, strat_phrase_root,strat_flag,strat_name_id, age_sum, sentence, in_ref
+    INSERT INTO results (target_id, docid, sentid, target_word, strat_phrase_root,strat_flag,strat_name_id, int_name, int_id, age_sum, phrase, in_ref) 
+		(SELECT target_id, docid, sentid,  target_word, strat_phrase_root,strat_flag,strat_name_id, int_name, int_id, age_sum, sentence, in_ref
 				FROM strat_target 
 				WHERE ((num_phrase=1 AND @(target_distance)<51) 
 				OR   (target_relation='parent' AND num_phrase <8 AND @(target_distance)<51)
@@ -75,8 +77,8 @@ connection.commit()
 
 #gather results from the near-sentence inferences
 cursor.execute(""" 
-    INSERT INTO results (target_id, docid, sentid, target_word, strat_phrase_root,strat_flag,strat_name_id, age_sum, phrase, in_ref) 
-		(SELECT target_id, docid, sentid,  target_word, strat_phrase_root,strat_flag,strat_name_id, age_sum, words_between, in_ref
+    INSERT INTO results (target_id, docid, sentid, target_word, strat_phrase_root,strat_flag,strat_name_id, int_name, int_id, age_sum, phrase, in_ref) 
+		(SELECT target_id, docid, sentid,  target_word, strat_phrase_root,strat_flag,strat_name_id, int_name, int_id, age_sum, words_between, in_ref
 				FROM strat_target_distant 
 				WHERE num_phrase=1)"""
 )
@@ -130,7 +132,7 @@ test=[]
 
 for line in cursor_main:
     #collect individual elements from the results dump
-    target_id, docid, sentid, target_word, strat_phrase_root,strat_flag,strat_name_id, age_sum, source, phrase, mention_check, in_ref, result_id = line
+    target_id, docid, sentid, target_word, strat_phrase_root,strat_flag,strat_name_id, int_name, int_id, age_sum, source, phrase, mention_check, in_ref, result_id = line
     checked=[]
     
     #ligature replacement
@@ -166,7 +168,7 @@ connection.commit()
 
 #write culled results to CSV
 cursor.execute("""
-         SELECT result_id,docid,sentid,target_word,strat_phrase_root,strat_flag,strat_name_id,in_ref,source,phrase
+         SELECT result_id,docid,sentid,target_word,strat_phrase_root,strat_flag,strat_name_id,int_name,int_id,in_ref,source,phrase
         	FROM results 
         	WHERE (is_strat_name='yes' AND source='in_sent')
            OR (is_strat_name='yes' AND source='out_sent' AND in_ref='no')
@@ -177,10 +179,10 @@ results=cursor.fetchall()
 with open('./output/results.csv', 'w') as outcsv:   
     #configure writer to write standard csv file
     writer = csv.writer(outcsv, delimiter=',', quoting=csv.QUOTE_ALL, lineterminator='\n')
-    writer.writerow(['result_id','docid','sentid','target_word','strat_phrase_root','strat_flag','strat_name_id','in_ref','source','phrase'])
+    writer.writerow(['result_id','docid','sentid','target_word','strat_phrase_root','strat_flag','strat_name_id','int_name','int_id','in_ref','source','phrase'])
     for item in results:
         #Write item to outcsv
-        writer.writerow([item[0], item[1], item[2],item[3], item[4], item[5],item[6], item[7], item[8], item[9]])
+        writer.writerow([item[0], item[1], item[2],item[3], item[4], item[5],item[6], item[7], item[8], item[9], item[10], item[11]])
 
 #close the postgres connection
 connection.close()
