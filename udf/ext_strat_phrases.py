@@ -10,9 +10,11 @@
 
 # ACQUIRE RELEVANT MODULES
 #==============================================================================
-import time, urllib2, csv, random, psycopg2, re, string, yaml
+import time, csv, random, psycopg2, re, string, yaml
+from urllib.request import urlopen
 from stop_words import get_stop_words
 from psycopg2.extensions import AsIs
+import codecs
 
 #tic
 start_time = time.time()
@@ -27,8 +29,9 @@ def download_csv( url ):
 
     #get strat_names from Macrostrat API
     dump = urllib2.urlopen( url )
-    dump = csv.reader(dump)
-
+    #dump = csv.reader(dump) # modification for Python 3 compatibility
+    dump = csv.reader(codecs.iterdecode(dump, 'utf-8'))
+    
     #unpack downloaded CSV as list of tuples
     #--> length of VARIABLE == number of fields
     #--> length of VARIABLE[i] == number of rows
@@ -46,10 +49,10 @@ def download_csv( url ):
 #==============================================================================
 # CONNECT TO POSTGRES
 #==============================================================================
-with open('./credentials', 'r') as credential_yaml:
+with open('./credentials.yml', 'r') as credential_yaml:
     credentials = yaml.load(credential_yaml)
 
-with open('./config', 'r') as config_yaml:
+with open('./config.yml', 'r') as config_yaml:
     config = yaml.load(config_yaml)
 
 # Connect to Postgres
@@ -92,7 +95,7 @@ int_dict   = download_csv( 'https://macrostrat.org/api/defs/intervals?all&format
 
 #stop words
 stop_words = get_stop_words('english')
-stop_words = [i.encode('ascii','ignore') for i in stop_words]
+#stop_words = [i.encode('ascii','ignore') for i in stop_words] # comment out
 alpha = list(string.ascii_lowercase);
 alpha_period = [i+'.' for i in alpha]
 stop_words = stop_words + ['lower','upper','research'] + alpha + alpha_period
@@ -152,6 +155,7 @@ for idx,line in enumerate(cursor):
 
             #initialize variables needed for analysis of preceding words
             preceding_words=[]
+            filt_preceding_words=[] # instrument for matching strat_phrase latter
             j = 2
 
             #loop to identify preceding stratigraphic modifiers on GOOD_WORD (e.g. Wonoka Formation)
@@ -161,35 +165,65 @@ for idx,line in enumerate(cursor):
             #   3) the preceding word is not the current word
             #   4) the preceding word is capitalized
             #   5) the preceding capitalized word is not a stratigraphic flag (e.g. Member Wonoka Formation)
-            #   6) the preceding word is not a capitalized stop word
+            #   6) the preceding word is not a capitalized stop word 
             #   7) the preceding word does not contain a number
-            while (i-j)>(-1) and len(words[i-j])!=0 and words[i-j] != words[i-j+1] and words[i-j][0].isupper() and words[i-j] not in strat_flags and words[i-j].lower() not in stop_words and re.findall(r'\d+',  words[i-j])==[]:
+            
+            # items 4) and 6) were removed, because they forbid a deeper search of age information ahead 
+            # (e.g. "-LRB- > 361 -- 313 Ma -RRB- volcanic-sedimentary rocks of the Dahalajunshan Formation")
+            # more alters in the lines 174 - 221
+            #while (i-j)>(-1) and len(words[i-j])!=0 and words[i-j] != words[i-j+1] and words[i-j][0].isupper() and words[i-j] not in strat_flags and words[i-j].lower() not in stop_words and re.findall(r'\d+',  words[i-j])==[]:
+            while (i-j)>(-1) and len(words[i-j])!=0 and words[i-j] != words[i-j+1] and words[i-j] not in strat_flags and re.findall(r'\d+',  words[i-j])==[]:
                 #loop also broken if preceding word is an interval name (e.g. Ediacaran Wonoka Formation)
                 if words[i-j] in int_dict['name']:
                     #record this interval name
-                    int_name=words[i-j]
+                    int_name=[words[i-j]]
+                    if (i-j)<6:
+                        m=(i-j)
+                    else:
+                        m=6
+                    for k in range(1,m):                      
+                        if words[i-j-k] in int_dict['name'] or words[i-j-k].lower() in ['late', 'early', 'middle', 'upper', 'lower', 'and', 'to', '--', '-', '~']:
+                            int_name.insert(0, words[i-j-k])       
 
-                    #list comprehensions to record interval id
-                    locations = [k for k, t in enumerate(int_dict['name']) if t==int_name]
-                    int_id = [int_dict['int_id'][I] for I in locations]
-                    int_id=int_id[0]
-                    break
+                    if int_name[0] in ['and', 'to', '--', '-', '~']:                        
+                        int_name.remove(int_name[0])
+
+                    list_int_name = int_name                    
+                    int_name = ' '.join(int_name)
+                    #list comprehensions to record interval id                        
+                    if list_int_name[-1] in int_dict['name']: 
+                        locations = [k for k, t in enumerate(int_dict['name']) if t==list_int_name[-1]]
+                        int_id = [int_dict['int_id'][I] for I in locations]
+                        int_id=int_id[0]                                                
+                    break                        
 
                 #loop also broken if preceding word is an age flag (i.e. 580 Ma. Wonoka Formation)
                 elif words[i-j] in age_flags:
                     #record age flag with its preceding word (most likely a number)
-                    int_name = words[i-j-1] + ' ' + words[i-j]
+                    int_name = [words[i-j-1], words[i-j]]
+                    if (i-j)<5:
+                        m=(i-j)
+                    else:
+                        m=5                    
+                    #deep to 5 words ahead
+                    for k in range(2,m):
+                        if re.findall(r'\d+',  words[i-j-k])!=[] or words[i-j-k] in ['-', '--', '~', '<', '>', '^', 'to', 'and']:  
+                            int_name.insert(0, words[i-j-k]) 
+                    int_name = ' '.join(int_name)                                            
                     break
 
-                #record qualifying preceding words and their indices
-                preceding_words.append(words[i-j])
-                indices.append((i-j))
+                #don't broken if preceding word is a strat name @ Shanpin
+                elif j<6 and words[i-j][0].isupper() and words[i-j].lower() not in stop_words and words[i-j] not in ['-LRB-', '-LLB-', '-', '--', '~', '<', '>', '^', ',', '.']:                  
+                    #record qualifying preceding words and their indices
+                    indices.append((i-j)) 
+                    preceding_words=words[(min(indices)):(max(indices)-1)]                    
+                    filt_preceding_words.append(words[i-j])  
                 j += 1
 
             #if qualifying preceding words found, join them to the stratigraphic flag and create a stratigraphic phrase
-            if preceding_words and len(preceding_words)<4:
+            if preceding_words and len(preceding_words)<5 and preceding_words == filt_preceding_words:
                 #create a full and partial stratigraphic phrase (i.e. with and without the stratigraphic flag)
-                preceding_words.reverse()
+                #preceding_words.reverse() 
                 strat_phrase = ' '.join(preceding_words) + ' ' + this_word
                 strat_phrase_cut = ' '.join(preceding_words)
                 strat_flag=this_word
