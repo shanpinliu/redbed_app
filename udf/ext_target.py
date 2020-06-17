@@ -159,8 +159,11 @@ success = 'number of target instances: %s' %len(target_list)
 
 #summary of performance time
 elapsed_time = time.time() - start_time
-print '\n ###########\n\n %s \n elapsed time: %d seconds\n\n ###########\n\n' %(success,elapsed_time)
+print ('\n ###########\n\n %s \n elapsed time: %d seconds\n\n ###########\n\n' %(success,elapsed_time))
 
 
 #USEFUL BIT OF CODE FOR LOOKING AT RANDOM RESULTS
-r=random.randint(0,len(target_list)-1); print "=========================\n"; print("\n".join(str(target) for target in target_list[r])); print  "\n========================="
+r=random.randint(0,len(target_list)-1); 
+print ("=========================\n");
+print (("\n".join(str(target) for target in target_list[r]))); 
+print  "\n========================="
