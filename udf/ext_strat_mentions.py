@@ -4,8 +4,10 @@
 
 # ACQUIRE RELEVANT MODULES
 #==============================================================================
-import time, urllib2, csv, random, psycopg2, re, yaml
+import time, csv, random, psycopg2, re, yaml
+from urllib.request import urlopen
 from psycopg2.extensions import AsIs
+import codecs
 
 #tic
 start_time = time.time()
@@ -17,8 +19,8 @@ def download_csv( url ):
     dump_dict = {}
     
     #get strat_names from Macrostrat API
-    dump = urllib2.urlopen( url )
-    dump = csv.reader(dump)
+    dump = urlopen( url )
+    dump = csv.reader(codecs.iterdecode(dump, 'utf-8'))
     
     #unpack downloaded CSV as list of tuples
     #--> length of VARIABLE == number of fields
@@ -39,11 +41,11 @@ def download_csv( url ):
 #==============================================================================
 
 # Connect to Postgres
-with open('./credentials', 'r') as credential_yaml:
-    credentials = yaml.load(credential_yaml)
+with open('./credentials.yml', 'r') as credential_yaml:
+    credentials = yaml.load(credential_yaml, Loader=yaml.FullLoader)
 
-with open('./config', 'r') as config_yaml:
-    config = yaml.load(config_yaml)
+with open('./config.yml', 'r') as config_yaml:
+    config = yaml.load(config_yaml, Loader=yaml.FullLoader)
     
 connection = psycopg2.connect(
     dbname=credentials['postgres']['database'],
@@ -166,16 +168,40 @@ for idx1,doc in enumerate(doc_list.keys()):
                         #look to see if there is an interval name before the mention
                         if i>1 and words[i-1] in int_dict['name']:
                             #record this interval name
-                            int_name=words[i-1]
-                            #list comprehensions to record interval id
-                            locations = [k for k, t in enumerate(int_dict['name']) if t==int_name]
-                            int_id = [int_dict['int_id'][I] for I in locations]
-                            int_id=int_id[0]                        
+                            int_name=[words[i-1]]
+                            if (i-1)<6:
+                                m=(i-1)
+                            else:
+                                m=6                            
+                            for k in range(1,m):                      
+                                if words[i-1-k] in int_dict['name'] or words[i-1-k].lower() in ['late', 'early', 'middle', 'upper', 'lower', 'and', 'to', '--', '-', '~']:
+                                    int_name.insert(0, words[i-1-k]) 
+                     
+                            if int_name[0] in ['and', 'to', '--', '-', '~']:
+                                int_name.remove(int_name[0])
+
+                            list_int_name = int_name                               
+                            int_name = ' '.join(int_name)
+
+                            #list comprehensions to record interval id                        
+                            if list_int_name[-1] in int_dict['name']: 
+                                locations = [k for k, t in enumerate(int_dict['name']) if t==list_int_name[-1]]
+                                int_id = [int_dict['int_id'][I] for I in locations]
+                                int_id=int_id[0]                        
                         
                         #look to see if there is an age_flag before the mention
                         elif i>1 and words[i-1] in age_flags:
                             #record age flag with its preceding word (most likely a number)
-                            int_name = words[i-2] + ' ' + words[i-1]
+                            int_name = [words[i-1-1], words[i-1]]
+                            if (i-1)<5:
+                                m=(i-1)
+                            else:
+                                m=5                              
+                            #deep to 5 words ahead
+                            for k in range(2,m):
+                                if re.findall(r'\d+',  words[i-1-k])!=[] or words[i-1-k] in ['-', '--', '~', '<', '>', '^', 'to', 'and']:  
+                                    int_name.insert(0, words[i-1-k])  
+                            int_name = ' '.join(int_name)  
                         
                         #record where mention is found
                         max_word_id = str(i+len(name_part))
