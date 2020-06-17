@@ -161,8 +161,8 @@ for idx,doc in enumerate(doc_cursor):
             strat_info = [item for item in tmp_strat if item[1]==strat_find]
             
             #define the sentids for sentences that bridge the strat_phrase(s) to the orphan
-            sent_inbetween=range(strat_find,target[1]+1)
-            
+            #sent_inbetween=range(strat_find,target[1]+1)
+            sent_inbetween=list(range(strat_find,target[1]+1)), #modified for python 3
             #collect the words between strat_phrases and orphaned target
             sent_cursor.execute(""" 
                         SELECT docid, sentid, words from %(my_app)s_sentences_%(my_product)s
