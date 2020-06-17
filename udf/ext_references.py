@@ -15,10 +15,10 @@ start_time = time.time()
 
 #Credentials and configuration
 with open('./credentials.yml', 'r') as credential_yaml:
-    credentials = yaml.load(credential_yaml)
+    credentials = yaml.load(credential_yaml, Loader=yaml.FullLoader)
 
 with open('./config.yml', 'r') as config_yaml:
-    config = yaml.load(config_yaml)
+    config = yaml.load(config_yaml, Loader=yaml.FullLoader)
 
 # Connect to Postgres
 connection = psycopg2.connect(
