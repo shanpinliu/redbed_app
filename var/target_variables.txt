@@ -6,9 +6,9 @@
 #   EXAMPLE:    [r'\b' + ooid + r'\b', r'\b' + ooids + r'\b']
 #               will find all instances of 'ooid' or 'ooids' bound by a non-alphanumeric character
 
-bed_target_names = ['red bed', 'red beds', 'redbed', 'redbeds']
+bed_target_names = ['red bed', 'red beds', 'redbed', 'redbeds', 'red-bed', 'red-beds']
 
-color_target_names = ['red', 'reddish', 'purple', 'purplish', 'pink', 'pinkish', 'brown', 'brownish', 'yellow', 'yellowish', 'green', 'greenish', 'black', 'blackish', 'dark', 'gray', 'grayish', 'white', 'whitish', 'blue', 'blueish', 'colourless']
+color_target_names = ['red', 'orange', 'purple', 'pink', 'brown', 'yellow', 'green', 'black',  'dark', 'gray', 'white', 'blue',  'colourless', 'mottled', 'reddish', 'blackish', 'brownish', 'purplish', 'greenish', 'grayish', 'whitish', 'blueish', 'yellowish', 'pinkish']
 
 thick_target_names = ['thick', 'thickness']
 
