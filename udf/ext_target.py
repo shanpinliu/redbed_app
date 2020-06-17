@@ -93,12 +93,12 @@ for line in cursor:
                      target_path = dep_paths[span[0]:span[1]]
                      target_parent = dep_parents[span[0]:span[1]]
 
-		             #children of each component of a target_name
+		     #children of each component of a target_name
                      for span_idx in range(span[0], span[1]):                             
                          children = [j for j,i in enumerate(dep_parents) if i==span_idx+1]
                          target_children.append(children)
 
-		             #convert parent_ids to Pythonic ids
+		     #convert parent_ids to Pythonic ids
                      target_parent = [i-1 for i in target_parent]
 
                      #add finds to a local variable
