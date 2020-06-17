@@ -12,11 +12,11 @@ from psycopg2.extensions import AsIs
 start_time = time.time()
 
 # Connect to Postgres
-with open('./credentials', 'r') as credential_yaml:
-    credentials = yaml.load(credential_yaml)
+with open('./credentials.yml', 'r') as credential_yaml:
+    credentials = yaml.load(credential_yaml, Loader=yaml.FullLoader)
 
-with open('./config', 'r') as config_yaml:
-    config = yaml.load(config_yaml)
+with open('./config.yml', 'r') as config_yaml:
+    config = yaml.load(config_yaml, Loader=yaml.FullLoader)
 
 # Connect to Postgres
 connection = psycopg2.connect(
@@ -48,6 +48,7 @@ cursor.execute("""
             phrase_start,
             phrase_end,
             int_name,
+            int_id,
             num_phrase,
             strat_phrases.sentence,
             strat_phrases.age_agree
@@ -94,7 +95,7 @@ strat_target_list=[]
 
 #loop through all sentences with strat entities/mentions
 for idx, line in enumerate(strat_list):
-    doc_id, sent_id, strat_phrase_root, strat_flag,strat_name_id,phrase_start,phrase_end,int_name,num_phrase,sentence,age_agree = line
+    doc_id, sent_id, strat_phrase_root, strat_flag,strat_name_id,phrase_start,phrase_end,int_name,int_id,num_phrase,sentence,age_agree = line
     
     #grab the target instances for that same sentence    
     target=[s for k, s in enumerate(target_instances) if s[0]==doc_id and s[1]==sent_id]
@@ -136,7 +137,7 @@ for idx, line in enumerate(strat_list):
         #dump to local variable
         strat_target_list.append([doc_id, sent_id, strat_phrase_root,num_phrase,
                                  target_relation,target_distance,sentence,
-                                 strat_flag,phrase_start,phrase_end,int_name,
+                                 strat_flag,phrase_start,phrase_end,int_name,int_id,
                                  words_between,target_word,target_word_idx])        
         #write to PSQL table
         cursor.execute(""" 
@@ -150,6 +151,7 @@ for idx, line in enumerate(strat_list):
                                           strat_start,
                                           strat_end,
                                           int_name,
+                                          int_id,
                                           num_phrase,
                                           target_relation,
                                           target_distance,
@@ -158,13 +160,13 @@ for idx, line in enumerate(strat_list):
                                           age_agree,
                                           target_id)
                         VALUES (%s, %s, %s, %s, %s, 
-                                %s, %s, %s, %s, %s,
+                                %s, %s, %s, %s, %s, %s,
                                 %s, %s, %s, %s, %s, %s, %s);""",
                                 
                                 (doc_id, sent_id, target_word,
                                  target_word_idx, strat_phrase_root, strat_flag,
                                  strat_name_id,phrase_start,phrase_end,
-                                 int_name,num_phrase,target_relation,
+                                 int_name,int_id,num_phrase,target_relation,
                                  target_distance,words_between,sentence,age_agree, target_id)
             )
             
