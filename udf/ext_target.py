@@ -65,17 +65,17 @@ for line in cursor:
     #loop through all the target names
     for name in target_names:   
     	#starting index of all matches for a target_name in the joined sentence
-	    matches=[m.start() for m in re.finditer(name,sent.lower())]
-
-	    if matches:            
-	         #if at least one match is found, count number of spaces backward to arrive at word index
+	matches=[m.start() for m in re.finditer(name,sent.lower())]
+	
+	if matches:            
+	     #if at least one match is found, count number of spaces backward to arrive at word index
              indices = [sent[0:m].count(' ') for m in matches]
-	         #remove double hits (i.e. stromatolitic-thrombolitic)
+	     #remove double hits (i.e. stromatolitic-thrombolitic)
              indices = list(set(indices))
-	         #target_name spans its starting word index to the number of words in the phrase
+	     #target_name spans its starting word index to the number of words in the phrase
              target_word_idx = [[i,i+len(name.split(' '))] for i in indices]
 
-	         #initialize other data about a found target_name
+	     #initialize other data about a found target_name
              target_pose=[]
              target_path=[]
              target_parent=[]
@@ -83,9 +83,11 @@ for line in cursor:
              for span in target_word_idx:                    
                  #poses, paths and parents can be found at same indices of a target_name find
                  target_word = ' '.join(words[span[0]:span[1]])
-                 target_word_expand = str(' '+target_word+' ')
- 
-                 if str(' '+name+' ') in str(target_word_expand) or str('-'+name+'-') in str(target_word_expand) or str('-'+name+' ') in str(target_word_expand) or str(' '+name+'-') in str(target_word_expand):                  
+		 ## extend the word for matching latter
+                 target_word_extend = str(' '+target_word+' ')
+                 
+		 # this matching is necessary for short words (e.g. '-red ' is in 'light-red ', but not in 'prepared')
+                 if str(' '+name+' ') in str(target_word_extend) or str('-'+name+'-') in str(target_word_extend) or str('-'+name+' ') in str(target_word_extend) or str(' '+name+'-') in str(target_word_extend):                  
                      target_children=[]
                      target_pose = poses[span[0]:span[1]]
                      target_path = dep_paths[span[0]:span[1]]
