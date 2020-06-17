@@ -1,3 +1,11 @@
+We modified Peters's application to identify globally lithological color and stratigraphic names in order to address the questions of red-bed distribution and environmental evolution. This application worked well in python 3 on my PC computer (Windows 10) after setting up the Postgres (in the 'setup.sh' file) according to the config file.
+
+Some modefied codes are annotated in the files. These modefications are mainly for:
+     1) searching short words, e.g. red;
+     2) deeper search of age information
+     3) Python 3 compatibility
+
+
 # Stromatolite Application Demonstration
 We present a demonstration of the [GeoDeepDive](https://geodeepdive.org) text mining application used 
 in Peters, Husson and Wilcots [2017, Geology](http://doi.org/10.1130/G38931.1). The goal of this application is to identify tuples between stromatolite fossils and stratigraphic names in order to assess the spatio-temporal distribution
