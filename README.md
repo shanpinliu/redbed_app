@@ -2,8 +2,8 @@ We modified Peters's application to identify globally lithological color and str
 
 Some modefied codes are annotated in the files. These modefications are mainly for:
      1) searching short words, e.g. red;
-     2) deeper search of age information
-     3) Python 3 compatibility
+     2) deeper search of age information;
+     3) Python 3 compatibility.
 
 
 # Stromatolite Application Demonstration
