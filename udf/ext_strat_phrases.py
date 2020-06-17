@@ -321,10 +321,11 @@ success = 'number of stratigraphic entities : %s' %len(strat_list)
 
 #summary of performance time
 elapsed_time = time.time() - start_time
-print '\n ###########\n\n %s \n elapsed time: %d seconds\n\n ###########\n\n' %(success,elapsed_time)
+print ('\n ###########\n\n %s \n elapsed time: %d seconds\n\n ###########\n\n' %(success,elapsed_time))
 
 #print out random result
-r=random.randint(0,len(strat_list)-1); show = "\n".join(str(x) for x in strat_list[r].split('\t')); print "=========================\n" + show + "\n========================="
+r=random.randint(0,len(strat_list)-1); show = "\n".join(str(x) for x in strat_list[r].split('\t'));
+print ("=========================\n" + show + "\n=========================")
 
 
 #%% OLD CODE
