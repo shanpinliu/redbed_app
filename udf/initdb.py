@@ -8,10 +8,10 @@ import psycopg2
 from psycopg2.extensions import AsIs
 
 # Connect to Postgres
-with open('./credentials', 'r') as credential_yaml:
+with open('./credentials.yml', 'r') as credential_yaml:
     credentials = yaml.load(credential_yaml)
 
-with open('./config', 'r') as config_yaml:
+with open('./config.yml', 'r') as config_yaml:
     config = yaml.load(config_yaml)
 
 # Connect to Postgres
