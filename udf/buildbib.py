@@ -6,10 +6,10 @@ import json,psycopg2, yaml
 
 # Connect to Postgres
 #Shanpin added 'Loader' parameter for Python 3 compatibility
-with open('./credentials', 'r') as credential_yaml:
+with open('./credentials.yml', 'r') as credential_yaml:
     credentials = yaml.load(credential_yaml, Loader=yaml.FullLoader)
 
-with open('./config', 'r') as config_yaml:
+with open('./config.yml', 'r') as config_yaml:
     config = yaml.load(config_yaml, Loader=yaml.FullLoader)
 
 # Connect to Postgres
