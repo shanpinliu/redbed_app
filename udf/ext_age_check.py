@@ -243,7 +243,7 @@ success = 'SUMMARY OF AGE CHECKS: yays = %s; nays = %s; unknown = %s' %(yay, nay
 
 #summary of performance time
 elapsed_time = time.time() - start_time
-print '\n ###########\n\n %s \n elapsed time: %d seconds\n\n ###########\n\n' %(success,elapsed_time)
+print ('\n ###########\n\n %s \n elapsed time: %d seconds\n\n ###########\n\n' %(success,elapsed_time))
 
     
     
