@@ -14,7 +14,7 @@ thick_target_names = ['thick', 'thickness']
 
 chemistry_target_names = ['Fe2+', 'Fe3+', 'FeO', 'Fe2O3']
 
-mineral_target_names = ['hematite', 'haematite', 'limonite', 'pyrite', 'siderite', 'goethite', 'maghemite']
+mineral_target_names = ['hematite', 'haematite', 'limonite', 'pyrite', 'siderite', 'goethite', 'maghemite', 'carbonate']
 
 target_names = bed_target_names+color_target_names+thick_target_names+chemistry_target_names+mineral_target_names
 
