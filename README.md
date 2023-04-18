@@ -1,7 +1,8 @@
 # Redbed GDD application
 
-This is a fork of the GeoDeepDive text mining application used in Peters, Husson and Wilcots 2017, Geology. Please see the original Stromatolite Application Demonstration for a comprehensive description of the method and dependencies.
-We modified Peters's application to identify globally lithological color and stratigraphic names in order to address the questions of red-bed distribution and environmental evolution. This application worked well in python 3 on my PC computer (Windows 10) after setting up the Postgres (in the 'setup.sh' file) according to the config file.
+This is a fork of the [GeoDeepDive](https://geodeepdive.org/) text mining application used in Peters, Husson and Wilcots 2017, Geology. Please see the original [Stromatolite Application Demonstration](https://github.com/UW-Macrostrat/stromatolites_demo#readme) for a comprehensive description of the method and dependencies.
+
+We target to identify globally lithological colors and stratigraphic names in order to address the questions of red-bed distribution and environmental evolution. This application worked well in python 3 on my PC computer (Windows 10) after setting up the Postgres (in the 'setup.sh' file) according to the config file.
 
 Some modefied codes are annotated in the files. These modefications are mainly for:
      1) searching short words, e.g. red;
