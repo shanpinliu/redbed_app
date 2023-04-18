@@ -1,3 +1,6 @@
+# Redbed GDD application
+
+This is a fork of the GeoDeepDive text mining application used in Peters, Husson and Wilcots 2017, Geology. Please see the original Stromatolite Application Demonstration for a comprehensive description of the method and dependencies.
 We modified Peters's application to identify globally lithological color and stratigraphic names in order to address the questions of red-bed distribution and environmental evolution. This application worked well in python 3 on my PC computer (Windows 10) after setting up the Postgres (in the 'setup.sh' file) according to the config file.
 
 Some modefied codes are annotated in the files. These modefications are mainly for:
@@ -5,87 +8,6 @@ Some modefied codes are annotated in the files. These modefications are mainly f
      2) deeper search of age information;
      3) Python 3 compatibility.
 
-
-# Stromatolite Application Demonstration
-We present a demonstration of the [GeoDeepDive](https://geodeepdive.org) text mining application used 
-in Peters, Husson and Wilcots [2017, Geology](http://doi.org/10.1130/G38931.1). The goal of this application is to identify tuples between stromatolite fossils and stratigraphic names in order to assess the spatio-temporal distribution
-of stromatolites across Earth history. This application uses a combination of Python and 
-PostgreSQL, and is the same as used to generate the results for the published manuscript. We also 
-include 5 USGS Technical Reports from the GeoDeepDive database - a subset of the 8,425 
-documents analyzed for the manuscript - to serve as a demonstration of how the application
-operates.
-
-## Getting started
-Dependencies:
-  + [GNU Make](https://www.gnu.org/software/make/)
-  + [git](https://git-scm.com/)
-  + [pip](https://pypi.python.org/pypi/pip)
-  + [PostgreSQL](http://www.postgresql.org/)
-
-### OS X
-OS X ships with GNU Make, `git`, and Python, but you will need to install `pip` and PostgreSQL.
-
-To install `pip`:
-````
-sudo easy_install pip
-````
-
-To install PostgreSQL, it is recommended that you use [Postgres.app](http://postgresapp.com/). Download
-the most recent version, and be sure to follow [the instructions](http://postgresapp.com/documentation/cli-tools.html)
-for setting up the command line tools, primarily adding the following line to your `~/.bash_profile`:
-
-````
-export PATH=$PATH:/Applications/Postgres.app/Contents/Versions/latest/bin
-````
-
-
-### Setting up the project
-First, clone this repository and run the setup script:
-
-````
-git clone https://github.com/UW-Macrostrat/stromatolites_demo
-cd stromatolites_demo
-make
-````
-Note that it is likely that you may have to issue a sudo with the make command above.
-
-Edit `credentials` with your username for your local Postgres database.
-
-To create the database needed to run this demonstration, type:
-
-````
-make local_setup
-````
-
-To run the demonstration, type:
-
-````
-python run.py
-````
-
-Results are written to the `output` folder to the 
-file `results.csv`. Please see `Results Summary` for a description of the fields returned.
-
-NOTE: if `run.py` fails to run properly or does not produce results, one likely culprit is the `Python` dependencies did not install correctly, perhaps because of multiple installations of Python on your local machine. A way to fix this is to run:
-
-````
-python -m pip install <pkg>
-````
-for the offending packages. A good guess is that its failing to install the `stop-words` package, as the other Python dependencies are fairly common.
-
-
-## File Summary
-
-#### config
-A YAML file that contains project settings.
-
-
-#### credentials
-A YAML file that contains local postgres credentials for testing and generating examples.
-
-
-#### requirements.txt
-List of Python dependencies to be installed by `pip`
 
 
 #### run.py
@@ -110,5 +32,3 @@ in\_ref| application determination ([ext_references.py](https://github.com/UW-Ma
 source| classifier indicating whether the extraction was from the same sentence ("in\_sent") or from a nearby sentence ("out\_sent").
 phrase| full phrase that serves as basis for the determination that the stratigraphic phrase contains stromatolite fossils.
 
-## License
-CC-BY 4.0 International
