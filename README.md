@@ -7,7 +7,8 @@ We target to identify globally lithological colors and stratigraphic names in or
 Some modefied codes are annotated in the files. These modefications are mainly for:
      1) searching short words, e.g. red;
      2) deeper search of age information;
-     3) Python 3 compatibility.
+     3) Python 3 compatibility;
+     4) adapt with multiprocess.
 
 
 
