@@ -152,29 +152,6 @@ def load_strat_phrases(ids, shared):
     special_words = ['de', 'el', 'del', 'la', 'di', 'al']
     # 'late', 'later', 'latest', 'early', 'earlier', 'earliest', 'middle', 'upper', 'lower', 'oldest', 
     
-    """
-    file1 = ReadTxtName(r'D:\python-script\macrostrat\stromatolites_demo-multiprocess\output\wrong_words.txt')
-    wrong_words = []
-    for i in file1:
-        if i != '':
-            wrong_words.append(i)
-            
-    file2 = ReadTxtName(r'D:\python-script\macrostrat\stromatolites_demo-multiprocess\output\wrong_names.txt')
-    wrong_names = []
-    for i in file2:
-        if i != '':
-            wrong_names.append(i)
-
-    file3 = ReadTxtName(r'D:\python-script\macrostrat\stromatolites_demo-multiprocess\output\weird_strings.txt')
-    weird_strings2 = []
-    for i in file3:
-        if i != '':
-            seg = i.split('==')
-            if seg[0]!='' and seg[1]!='':
-                weird_strings2.append(seg)
-    #print(stop_words)
-    """
-
     #STRATIGRAPHIC VARIABLE DEFINITIONS
     #with open('./var/strat_variables.txt') as fid:
         #strat_variables = fid.readlines()
