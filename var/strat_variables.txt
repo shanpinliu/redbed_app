@@ -6,9 +6,9 @@
 DICT_DELIM='$$$'
 
 #words indicating stratigraphic names
-strat_flags = ["Sequence", "Group", "Formation", "Member", "Supergroup", "Bed", "Subgroup","Gp.", "Fm.", "Mbr.", "SGp.", "Gp", "Fm", "Mbr", "SGp"]
+strat_names = ["Group", "Formation", "Member", "Supergroup", "Subgroup","Gp\.", "Gr\.", "Fm\.", "Mbr\.", "Mb\.", "SGp\.", "Gp", "Gr", "Fm", "Mbr", "Mb", "SGp", "formation", "member"]
     
-lith_flags = ["Alluvium", "Anhydrite", "Arenite", "Argillite", "Arkose", "Bauxite", "Breccia", "Clay", "Claystone", "Colluvium", "Conglomerate", "Diamictite", "Evaporite", "Gravel", "Graywacke", "Gypsum", "Halite", "Iron formation", "Ironstone", "Laterite", "Litharenite", "Loess", "Mud", "Mudstone", "Paleosol", "Pelite", "Phosphorite", "Sand", "Sandstone", "Shale", "Siliceous ooze", "Silt", "Siltstone", "Soil", "Subarkose", "Sublitharenite", "Volcaniclastic", "Wacke", "Metasiltstone", "Metapelite", "Ankerite", "Anthracite", "Bafflestone", "Bindstone", "Biomicrite", "Biosparite", "Boundstone", "Calcareous", "Carbonate", "Chalk", "Chert", "Coal", "Coquina", "Diatomite", "Dolomite", "Dolostone", "Flint", "Greensand", "Grit", "Intramicrite", "Intrasparite", "Lignite", "Limestone", "Marl", "Micrite", "Novaculite", "Oolite", "Oomicrite", "Oosparite", "Packstone", "Peat", "Pelmicrite", "Pelsparite", "Phosphorite", "Quartz", "Rudstone", "Tar", "Tillite", "Travertine", "Tufa", "Siderite"]
+lith_names = ["Dolomite", "Dolostone", "Limestone","Sandstone", "Shale", "Conglomerate", "Chert", "Mudstone",  "Claystone", "Siltstone", "Carbonate", "Chalk", "Marl", "Marlstone"]
 
 strat_flags = strat_flags+lith_flags
               
