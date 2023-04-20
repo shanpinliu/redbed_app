@@ -6,17 +6,32 @@
 #   EXAMPLE:    [r'\b' + ooid + r'\b', r'\b' + ooids + r'\b']
 #               will find all instances of 'ooid' or 'ooids' bound by a non-alphanumeric character
 
-bed_target_names = ['red bed', 'red beds', 'redbed', 'redbeds', 'red-bed', 'red-beds']
+bed_names = ['red bed', 'red beds', 'redbed', 'redbeds', 'red-bed', 'red-beds']
 
-color_target_names = ['red', 'orange', 'purple', 'pink', 'brown', 'yellow', 'green', 'black',  'dark', 'gray', 'white', 'blue',  'colourless', 'mottled', 'reddish', 'blackish', 'brownish', 'purplish', 'greenish', 'grayish', 'whitish', 'blueish', 'yellowish', 'pinkish']
+color_names = ['red', 'orange', 'purple', 'pink', 'brown', 'yellow', 'green', 'black', 'dark', 'gray', 'grey', 'white', 'blue', 'mottled', 'reddish', 'blackish', 'brownish', 'purplish', 'greenish', 'greyish', 'grayish', 'whitish', 'blueish', 'yellowish', 'pinkish', 'colourless', 'varicolored', 'varicoloured', 'mottled']
 
-thick_target_names = ['thick', 'thickness']
+position_names = ['basin', 'basins', 'belt', 'belts', 'region', 'regions', 'area', 'areas', 'longitude', 'latitude', 'location', 'located', 'locations', 'coordinates', 'coordinate', 'section', 'sections', 'zone', 'zones', 'field', 'fields']
 
-chemistry_target_names = ['Fe2+', 'Fe3+', 'FeO', 'Fe2O3']
+thickness_names = ['thick', 'thickness']
 
-mineral_target_names = ['hematite', 'haematite', 'limonite', 'pyrite', 'siderite', 'goethite', 'maghemite', 'carbonate']
+sed_lith_names = ['conglomerate', 'gravel', 'glutenite', 'breccia', 'metaconglomerate', 'sandstone', 'sand', 'arkose', 'greywacke', 'graywacke', 'greensand', 'arenite', 'subarkose', 'litharenite', 'sublitharenite', 'metagraywacke', 'silicarenite', 'sandy', 'siltstone', 'silt', 'mud', 'mudrock', 'claystone', 'mudstone', 'shale', 'clay', 'soil', 'paleosol', 'argillite', 'marl', 'marlstone', 'pelite', 'metasiltstone', 'metapelite', 'siltite', 'paleosoil', 'muddy', 'silty', 'clayey', 'coal', 'peat', 'carbonate', 'dolomite', 'limestone', 'lime mudstone', 'chalk', 'wackestone', 'packstone', 'grainstone', 'boundstone', 'framestone', 'rudstone', 'bafflestone', 'bindstone', 'dolostone', 'micrite', 'coquina', 'oolite', 'biomicrite', 'oomicrite', 'biosparite', 'pelmicrite', 'oosparite', 'pelsparite', 'intrasparite', 'intramicrite', 'tufa', 'calcarenite', 'marble', 'siliciclastic', 'mixed carbonate-siliciclastic', 'diamictite', 'chert', 'iron formation', 'novaculite', 'laterite', 'tillite', 'wacke', 'flysch', 'slate', 'phyllite', 'quartzite', 'metaquartzite', 'gneiss', 'schist', 'hornfel', 'greenschist', 'metasedimentary', 'paragneiss']
 
-target_names = bed_target_names+color_target_names+thick_target_names+chemistry_target_names+mineral_target_names
+envi_names = ['environment', 'facies'] + ['marine', 'subtidal', 'reef', 'bioherm', 'intrashelf', 'intraplatform', 'platform', 'offshore', 'shelf', 'basinal', 'paralic', 'abyss', 'submarine', 'pelagic', 'deep'] + ['transition', 'transitional', 'estuary', 'tidal', 'shoreline', 'coastal', 'foreshore', 'shoreface', 'peritidal', 'lagoonal', 'deltaic', 'delta', 'prodelta', 'beach', 'shallow'] + ['non-marine', 'eolian', 'loess', 'dune', 'fluvial', 'channel', 'floodplain', 'evaporite', 'levee', 'glacial', 'moraine', 'esker', 'drumlin', 'outwash', 'lacustrine', 'playa', 'alluvial', 'fluvial-lacustrine']
+
+
+target_names = sed_lith_names + bed_names + color_names + envi_names + position_names + thickness_names
+
+
+# siliciclastic and carbonate names
+conglomerate_names = ['conglomerate', 'gravel', 'glutenite', 'breccia', 'metaconglomerate']
+
+sandstone_names = ['sandstone', 'sand', 'arkose', 'greywacke', 'graywacke', 'greensand', 'arenite', 'subarkose', 'litharenite', 'sublitharenite', 'metagraywacke', 'silicarenite', 'sandy']
+
+mudstone_names = ['siltstone', 'silt', 'mud', 'mudrock', 'claystone', 'mudstone', 'shale', 'clay', 'soil', 'paleosol',  'argillite', 'marl', 'marlstone', 'pelite', 'metasiltstone', 'metapelite', 'siltite', 'paleosoil', 'muddy', 'silty', 'clayey', 'coal', 'peat']
+
+siliciclastic_names = conglomerate_names + sandstone_names + mudstone_names + ['siliciclastic', 'mixed carbonate-siliciclastic', 'diamictite', 'chert', 'iron formation', 'novaculite', 'laterite', 'tillite', 'wacke', 'flysch', 'slate', 'phyllite', 'quartzite', 'metaquartzite', 'gneiss', 'schist', 'hornfel', 'greenschist', 'metasedimentary', 'paragneiss']
+
+carbonate_names = ['carbonate', 'dolomite', 'limestone', 'lime mudstone', 'chalk', 'wackestone', 'packstone', 'grainstone', 'boundstone', 'framestone', 'rudstone', 'bafflestone', 'bindstone', 'dolostone', 'micrite', 'coquina', 'oolite', 'biomicrite', 'oomicrite', 'biosparite', 'pelmicrite', 'oosparite', 'pelsparite', 'intrasparite', 'intramicrite', 'tufa', 'calcarenite', 'marble']
 
 
 #an optional list of false hits
