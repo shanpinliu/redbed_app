@@ -85,7 +85,6 @@ def prepare_strat_target_distant(dblist, credentials):
         WHERE   {target_instances}.target_id
                 NOT IN (select {strat_target}.target_id from {strat_target})
         AND     {target_instances}.num_strat_doc<>0
-        AND {target_instances}.docid NOT IN (select distinct on ({strat_target_distant}.docid) {strat_target_distant}.docid from {strat_target_distant})
         ORDER BY {target_instances}.docid ASC, {target_instances}.sentid ASC
     """.format(**dblist))
     
