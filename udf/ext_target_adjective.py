@@ -4,93 +4,142 @@
 
 # import relevant modules and data
 #==============================================================================
+
+# -*- coding: utf-8 -*-
+
 import time, random, re, yaml, psycopg2
 from psycopg2.extensions import AsIs
 
-start_time = time.time()
+def intial_target_adjectives(dblist, credentials):
 
-# Connect to Postgres
-with open('./credentials.yml', 'r') as credential_yaml:
-    credentials = yaml.load(credential_yaml, Loader=yaml.FullLoader)
-
-with open('./config.yml', 'r') as config_yaml:
-    config = yaml.load(config_yaml, Loader=yaml.FullLoader)
-
-# Connect to Postgres
-connection = psycopg2.connect(
-    dbname=credentials['postgres']['database'],
-    user=credentials['postgres']['user'],
-    host=credentials['postgres']['host'],
-    port=credentials['postgres']['port'])
-cursor = connection.cursor()
-
-#IMPORT TARGETS WITH DEPENDENTS
-cursor.execute("""
-    SELECT docid, sentid, target_id, target_word, target_children
+    start_time = time.time()
     
-    FROM target_instances
-    WHERE target_children<>'[[]]'; 
-""")
-
-target=cursor.fetchall()
-
-
-#IMPORT THE SENTENCES DUMP
-cursor.execute("""
-    WITH temp as (
-            SELECT DISTINCT ON (docid, sentid) docid, sentid
-		     FROM target_instances
-            WHERE target_children<>'[[]]'     
-    )
-
-
-    SELECT s.docid, s.sentid, words, poses
-    FROM %(my_app)s_sentences_%(my_product)s AS s
-
-	JOIN temp ON temp.docid=s.docid AND temp.sentid=s.sentid; 
-    """, {
-    "my_app": AsIs(config['app_name']),
-    "my_product": AsIs(config['product'].lower())
-    })
-
-sentences=cursor.fetchall()
-
-#initalize the target_instances table
-cursor.execute("""
-    DELETE FROM target_adjectives;
-""")
-
-#push drop/create to the database
-connection.commit()
-
-
-adj=[]
-for idx,line in enumerate(target):
-    docid, sentid, target_id, target_word, target_children = line
-    target_children = eval(target_children)
-    target_children =target_children[0]
+    # Connect to Postgres
+    connection = psycopg2.connect(
+        dbname=credentials['postgres']['database'],
+        user=credentials['postgres']['user'],
+        host=credentials['postgres']['host'],
+        port=credentials['postgres']['port'])
+    cursor = connection.cursor()
     
-    sent = [elem for elem in sentences if elem[0]==docid and elem[1]==sentid]
+    cursor.execute(""" DROP INDEX IF EXISTS index_NLPname;""")
+    connection.commit()
+    cursor.execute(""" DROP INDEX IF EXISTS index_target_instances;""")
+    connection.commit()
     
-    for c in target_children:
-        if sent[0][3][c]=='JJ':
-            adj.append([docid, sentid, target_id, target_word, sent[0][2][c]])
-            
-            #write to PSQL table
-            cursor.execute(""" 
-                INSERT INTO target_adjectives(   docid,
-                                                sentid,
-                                                target_id,
-                                                target_word,
-                                                target_adjective)
-                VALUES (%s, %s, %s, %s, %s);""",
-                (docid, sentid, target_id, target_word, sent[0][2][c])
-            )
-        if c<0:
-            print ('something is up!')
+    cursor.execute(""" CREATE INDEX index_NLPname ON {NLPname} (docid, sentid);""".format(**dblist))
+    connection.commit()
+    cursor.execute(""" CREATE INDEX index_target_instances ON {target_instances} (docid, sentid);""".format(**dblist))
+    connection.commit()
+    
+    #IMPORT TARGETS WITH DEPENDENTS
+    cursor.execute("""
+        SELECT docid, sentid, target_id, target_word, target_children, target_parent, sentence
+        FROM {target_instances}; 
+    """.format(**dblist))
+    
+    target=cursor.fetchall()
+    #print(target)
+    
+    #initalize the target_instances table
+    cursor.execute("""
+        DELETE FROM {target_adjectives};
+    """.format(**dblist))
+    
+    
+    #push drop/create to the database
+    connection.commit()
+    return target
+    
+    
+def load_target_adjectives(target, shared):
+    dblist  = shared[0]
+    credentials = shared[1]
 
-#push insertions to the database
-connection.commit()
-            
-#close the connection
-connection.close()
+    # Connect to Postgres
+    connection = psycopg2.connect(
+        dbname=credentials['postgres']['database'],
+        user=credentials['postgres']['user'],
+        host=credentials['postgres']['host'],
+        port=credentials['postgres']['port'])
+    cursor = connection.cursor()
+    
+    all_ = len(target)
+    for idx,line in enumerate(target):
+        docid, sentid, target_id, target_word, target_children, target_parent, phrase = line
+        target_children = eval(target_children)
+        target_children = target_children[0]
+        
+        #IMPORT THE SENTENCES DUMP
+        cursor.execute("""
+            SELECT docid, sentid, words, poses
+            FROM {NLPname} 
+            WHERE docid = %(my_docid)s
+            AND sentid = %(my_sentid)s; 
+            """.format(**dblist), {"my_docid": docid, "my_sentid": sentid})
+        
+        sentences=cursor.fetchall()
+        sentences = [list(elem) for elem in sentences]
+        sent = [i for i in sentences[0][2]]
+        sent = ' '.join(sent)
+        sent = sent.replace(r"\\' \\'", ",")
+        sent = sent.replace(r"\\'", "'")
+        sent = sent.split(' ')
+        children_words = []
+        for c in target_children:
+            if c < len(sent):
+                children_words.append(sent[c])
+        
+        parent_words = []
+        for t in target_parent:
+            if t < len(sent):
+                parent_words.append(sent[t])
+        
+        #write to PSQL table
+        cursor.execute(""" 
+            INSERT INTO {target_adjectives}(   docid,
+                                            sentid,
+                                            target_id,
+                                            target_word,
+                                            target_adjective,
+                                            target_objective)
+            VALUES (%s, %s, %s, %s, %s, %s);""".format(**dblist),
+            (docid, sentid, target_id, target_word, children_words, parent_words))
+        
+        print("main loop:", (idx+1)/all_, end='\r')
+    #push insertions to the database
+    connection.commit()
+    #close the connection
+    connection.close()
+    
+
+def alter_results(dblist, credentials):
+    # Connect to Postgres
+    connection = psycopg2.connect(
+        dbname=credentials['postgres']['database'],
+        user=credentials['postgres']['user'],
+        host=credentials['postgres']['host'],
+        port=credentials['postgres']['port'])
+    cursor = connection.cursor()
+    
+    
+    cursor.execute("""
+        ALTER TABLE {results} ADD COLUMN IF NOT EXISTS target_adjective text,
+                              ADD COLUMN IF NOT EXISTS target_objective text;
+    """.format(**dblist))
+    connection.commit()
+    
+    cursor.execute("""
+        UPDATE {results} SET 
+        target_adjective = {target_adjectives}.target_adjective, 
+        target_objective = {target_adjectives}.target_objective 
+        From {target_adjectives}
+        WHERE {results}.docid = {target_adjectives}.docid 
+        AND {results}.target_id = {target_adjectives}.target_id ;""".format(**dblist))
+        
+    cursor.execute(""" DROP INDEX index_NLPname;""")
+    connection.commit()
+    cursor.execute(""" DROP INDEX index_target_instances;""")
+    connection.commit()
+    
+    connection.close()
