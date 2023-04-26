@@ -82,8 +82,8 @@ def prepare_strat_target_distant(dblist, credentials):
         SELECT  DISTINCT ON ({target_instances}.docid)
                 {target_instances}.docid
         FROM    {target_instances}
-        WHERE NOT EXISTS (select {strat_target}.target_id from {strat_target} 
-                          WHERE {strat_target}.target_id = {target_instances}.target_id)
+        WHERE EXISTS (select {strat_target}.target_id from {strat_target} 
+                          WHERE {strat_target}.target_id <> {target_instances}.target_id)
         AND     {target_instances}.num_strat_doc<>0
         ORDER BY {target_instances}.docid ASC, {target_instances}.sentid ASC
     """.format(**dblist))
@@ -148,8 +148,8 @@ def load_strat_target_distant(data):
                     sentence,
                     target_id
             FROM    {target_instances}
-            WHERE   {target_instances}.target_id 
-                    NOT IN (select {strat_target}.target_id from {strat_target}) 
+            WHERE   EXISTS (select {strat_target}.target_id from {strat_target}
+                            WHERE {strat_target}.target_id <> {target_instances}.target_id)
             AND     {target_instances}.docid=%(my_docid)s 
         """.format(**dblist), {
             "my_docid": doc[0]
